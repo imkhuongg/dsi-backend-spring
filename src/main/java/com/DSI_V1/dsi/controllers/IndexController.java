@@ -14,7 +14,7 @@ public class IndexController {
     @GetMapping("/test")
     public String getTest(){
 
-        return  "HELLO MOTHER FUCKER<br/>WELCOME TO SPRING BOOT WIDTH INDEX API";
+        return  "HELLO <br/>WELCOME TO SPRING BOOT WIDTH INDEX API";
     }
 
     @GetMapping("/app/admin")
