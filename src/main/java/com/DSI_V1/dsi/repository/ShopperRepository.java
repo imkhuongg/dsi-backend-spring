@@ -21,7 +21,7 @@ public interface ShopperRepository extends CrudRepository<Shopper , Integer> {
 
     @Transactional
     @Modifying
-    @Query(value = "INSERT INTO shopper(user_id,name_shop,email,phone,shop_address,follower,total_sold,total_revenue,created_at) VALUES (':user_id',':name_shop',':email',':phone',':shop_address',':follower',':total_sold',':total_revenue',':created_at')" , nativeQuery = true)
+    @Query(value = "INSERT INTO shopper(user_id,name_shop,email,phone,shop_address,follower,total_sold,total_revenue,created_at) VALUES (:user_id,:name_shop,:email,:phone,:shop_address,:follower,:total_sold,:total_revenue,:created_at)" , nativeQuery = true)
     int ShopperRegister(@Param("user_id") int user_id,
                         @Param("name_shop") String name_shop,
                         @Param("email") String email,

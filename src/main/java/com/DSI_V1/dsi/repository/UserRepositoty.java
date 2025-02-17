@@ -21,8 +21,7 @@ public interface UserRepositoty extends CrudRepository<User, Integer> {
                      @Param("email") String email,
                      @Param("password") String password);
 
-    @Query(value = "SELECT COUNT(*) as isShopper FROM shopper WHERE user_id = :user_id" , nativeQuery = true)
-    int checkShopper(@Param("user_id") int user_id);
+
 
 
 
