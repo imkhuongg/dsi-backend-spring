@@ -40,6 +40,9 @@ public class UploadImageController {
             String fileName = StringUtils.cleanPath(file.getOriginalFilename());
             Path path = Paths.get(GetDir +user_idString + "/" + fileName);
 
+            if (Files.exists(path)) {
+                return new ResponseEntity<>("File đã tồn tại!", HttpStatus.CONFLICT); // 409 Conflict
+            }
 
             Files.createDirectories(Paths.get(GetDir + user_idString));
 

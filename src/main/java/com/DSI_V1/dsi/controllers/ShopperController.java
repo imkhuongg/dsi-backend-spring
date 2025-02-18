@@ -62,6 +62,29 @@ public class ShopperController  {
 
         if(result != 1)  return new ResponseEntity<>("Failed to create shopper" , HttpStatus.BAD_REQUEST);
 
-        return new ResponseEntity<>("Shopper created Successfullty" , HttpStatus.CREATED);
+        return new ResponseEntity<>("Shopper created Successfully" , HttpStatus.CREATED);
+    }
+    @PostMapping("/updateAvatar")
+    public ResponseEntity<?> UpdateAvatar(HttpServletRequest request,
+                                          @RequestParam("avatar") String avatar){
+        int user_id = extractUserIDFromToken.getUserIDFromToken(request);
+        int result = shopperService.UpdateIMG(user_id,avatar);
+        if(result != 1)  return new ResponseEntity<>("Failed to create shopper" , HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>("avatar updated Successfully" , HttpStatus.CREATED);
+    }
+    @PostMapping("/updateShopper")
+    public ResponseEntity<?> UpdateShopper(HttpServletRequest request,
+                                           @RequestParam("name_shop") String name_shop,
+                                           @RequestParam("email") String email,
+                                           @RequestParam("phone") int phone,
+                                           @RequestParam("shop_address") String shop_address){
+        int user_id = extractUserIDFromToken.getUserIDFromToken(request);
+        LocalDateTime updated_at = LocalDateTime.now();
+        int result = shopperService.UpdateShopper(user_id,name_shop,email,phone,shop_address,updated_at);
+        if(result != 1)  return new ResponseEntity<>("Failed to update shopper" , HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>("Shopper updated Successfully" , HttpStatus.CREATED);
+
     }
 }
