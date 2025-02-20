@@ -30,6 +30,9 @@ public class SecurityConfig  {
     @Autowired
     private JWTAuthFilter jwtAuthFilter;
 
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
@@ -37,13 +40,12 @@ public class SecurityConfig  {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auth) -> auth
                         .requestMatchers( "/api/v1/auth/**").permitAll()
-                        .requestMatchers("/**").permitAll()
                         .requestMatchers("/api/v1/image/download/**").permitAll()
                         .anyRequest()
                         .authenticated())
-
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
                 .authenticationProvider(authenticationProvider()).addFilterBefore(
                         jwtAuthFilter, UsernamePasswordAuthenticationFilter.class
                 );

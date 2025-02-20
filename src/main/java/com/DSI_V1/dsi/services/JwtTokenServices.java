@@ -1,15 +1,15 @@
 package com.DSI_V1.dsi.services;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import com.DSI_V1.dsi.properties.JwtProperties;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import io.jsonwebtoken.Claims;
-
 
 import java.security.Key;
+import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,63 +18,61 @@ import java.util.function.Function;
 @Service
 public class JwtTokenServices {
 
-    public String SECRET_KEY = "3331c4eb4bc791c407948a02d6da791ae1bc80a3dc2969e1d9ac5e8d8ad32941";
-    private Date CURRENT_TIME = new Date(System.currentTimeMillis());
-    private Date EXPIRATION_TIME = new Date(System.currentTimeMillis() + 1000 * 60 * 60 *24);
+    private final JwtProperties jwtProperties;
+    private static final long EXPIRATION_TIME = Duration.ofDays(10).toMillis();
 
+    public JwtTokenServices(JwtProperties jwtProperties) {
+        this.jwtProperties = jwtProperties;
+    }
 
-    public String extractUsername(String token){
+    public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);
     }
-    // END OF EXTRACT USERNAME FROM TOKEN METHOD.
 
-    public Date extractExpiration(String token){
+    public Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
     }
-    // END OF EXTRACT EXPIRATION DATE FROM TOKEN METHOD.
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver){
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-    // END OF EXTRACT CLAIMS FROM TOKEN METHOD.
 
-    public Claims extractAllClaims(String token){
+    public Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
-                .build().parseClaimsJws(token).getBody();
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
-    // END OF EXTRACT ALL CLAIMS FROM TOKEN METHOD.
 
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(jwtProperties.getSecret());
         return Keys.hmacShaKeyFor(keyBytes);
     }
-    // END OF GET SIGNING KEY METHOD.
 
-    private Boolean isTokenExpired(String token){
+    public boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
-    // END OF CHECK IF TOKEN IS EXPIRED FROM TOKEN METHOD.
 
-    public String generateToken(UserDetails userDetails){
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
+    public String generateToken(UserDetails userDetails) {
+        return createToken(new HashMap<>(), userDetails.getUsername());
     }
-    // END OF GENERATE TOKEN METHOD.
 
-    private String createToken(Map<String, Object> claims, String subject){
+    private String createToken(Map<String, Object> claims, String subject) {
+        Date now = new Date();
+        Date expiryDate = new Date(now.getTime() + EXPIRATION_TIME);
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(subject)
-                .setIssuedAt(CURRENT_TIME)
-                .setExpiration(EXPIRATION_TIME)
+                .setIssuedAt(now)
+                .setExpiration(expiryDate)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
-    // END OF CREATE JWT TOKEN METHOD.
 
-    public Boolean validateToken(String token, UserDetails userDetails){
+    public boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }

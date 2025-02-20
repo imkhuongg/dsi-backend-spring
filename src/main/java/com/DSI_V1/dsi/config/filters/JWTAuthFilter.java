@@ -1,7 +1,9 @@
 package com.DSI_V1.dsi.config.filters;
 
+import com.DSI_V1.dsi.helpers.JsonErrorResponse;
 import com.DSI_V1.dsi.services.JwtTokenServices;
 import com.DSI_V1.dsi.services.auth.MyCustomUserDetailsService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,17 +49,24 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
         jwtToken = authHeader.substring(7);
         userEmail = jwtTokenServices.extractUsername(jwtToken);
+        try {
+            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = myCustomUserDetailsService.loadUserByUsername(userEmail);
 
-        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = myCustomUserDetailsService.loadUserByUsername(userEmail);
+                if (jwtTokenServices.validateToken(jwtToken, userDetails)) {
+                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-            if (jwtTokenServices.validateToken(jwtToken, userDetails)) {
-                UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-                SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
+                }
             }
+        } catch (ExpiredJwtException e){
+            JsonErrorResponse.sendError(response,HttpServletResponse.SC_UNAUTHORIZED,"Token is EXPIRED", request.getRequestURI());
+            return;
+        } catch (Exception e){
+            JsonErrorResponse.sendError(response,HttpServletResponse.SC_UNAUTHORIZED,"Token INVALID!", request.getRequestURI());
+            return;
         }
         filterChain.doFilter(request, response);
     }
