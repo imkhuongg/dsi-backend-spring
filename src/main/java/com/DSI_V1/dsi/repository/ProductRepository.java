@@ -49,5 +49,11 @@ public interface ProductRepository extends CrudRepository<product , Integer> {
     @Query(value = "SELECT * FROM product" , nativeQuery = true)
     List<product> getAllProduct();
 
+    @Query(value = "SELECT name_product FROM product WHERE user_id = :user_id AND name_product LIKE :name_product%", nativeQuery = true)
+    List<String> searchByName(@Param("user_id") int user_id,
+                              @Param("name_product") String nameProduct);
 
+    @Query(value = "SELECT * FROM product WHERE user_id = :user_id AND name_product LIKE :name_product%" , nativeQuery = true)
+    List<product> ResultProduct(@Param("user_id") int user_id,
+                                @Param("name_product") String nameProduct);
 }

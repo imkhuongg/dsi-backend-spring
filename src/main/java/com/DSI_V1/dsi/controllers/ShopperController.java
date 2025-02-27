@@ -4,7 +4,9 @@ import com.DSI_V1.dsi.dto.requests.ShopperUpdateDTO;
 import com.DSI_V1.dsi.helpers.ExtractUserIDFromToken;
 import com.DSI_V1.dsi.helpers.SuccessResponse;
 import com.DSI_V1.dsi.models.Shopper;
+import com.DSI_V1.dsi.models.product;
 import com.DSI_V1.dsi.services.ShopperService;
+import com.DSI_V1.dsi.services.manageShop.ManageProductService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +16,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -25,6 +29,8 @@ public class ShopperController  {
 
     @Autowired
     private ExtractUserIDFromToken extractUserIDFromToken;
+    @Autowired
+    private ManageProductService manageProductService;
 
     @GetMapping("/check")
     public ResponseEntity<?> checkShopper(HttpServletRequest request){
@@ -81,5 +87,20 @@ public class ShopperController  {
 
         return ResponseEntity.ok(SuccessResponse.StatusMessage("Shopper updated"));
 
+    }
+    @GetMapping("/hint/{name_product}")
+    public ResponseEntity<?> HintProduct(HttpServletRequest request , @PathVariable String name_product){
+        int user_id = extractUserIDFromToken.getUserIDFromToken(request);
+
+        List<String> Hints = manageProductService.searchByName(user_id,name_product);
+
+        return  new ResponseEntity<>(Hints , HttpStatus.OK);
+
+    }
+    @GetMapping("/search/{name_product}")
+    public ResponseEntity<?> ResultSearch(HttpServletRequest request, @PathVariable String name_product){
+        int user_id = extractUserIDFromToken.getUserIDFromToken(request);
+        List<product> products = manageProductService.resultSearch(user_id,name_product);
+        return  new ResponseEntity<>(products , HttpStatus.OK);
     }
 }

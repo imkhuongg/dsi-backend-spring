@@ -53,7 +53,7 @@ public class ProductController {
         String path = user_id  + "/" + productDTO.getThumb();
         LocalDateTime created_at = LocalDateTime.now();
 
-        int result = productService.createProduct(productDTO.getName_brand() , productDTO.getPrice(), user_id,productDTO.getDescription(), productDTO.getName_brand(), path,productDTO.getShopper_id(),created_at);
+        int result = productService.createProduct(productDTO.getName_product() , productDTO.getPrice(), user_id,productDTO.getDescription(), productDTO.getName_brand(), path,productDTO.getShopper_id(),created_at);
 
         if(result != 1) return new ResponseEntity<>("Failed to create product" , HttpStatus.BAD_REQUEST);
         return  ResponseEntity.ok(SuccessResponse.StatusMessage("Created product successfully"));

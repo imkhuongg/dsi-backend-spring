@@ -31,4 +31,7 @@ public class ManageProductService {
         return productReposity.updateProduct(name_product,price,description,name_brand,thumb,updated_at,product_id);
     }
 
+    public List<String> searchByName(int user_id, String name_product) {return productReposity.searchByName(user_id,name_product);}
+    public List<product> resultSearch(int user_id, String name_product) {return productReposity.ResultProduct(user_id,name_product);}
+
 }

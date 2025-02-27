@@ -13,6 +13,8 @@ public class ProductService {
     private ProductRepository productReposity;
 
 
-    public List<product> AllProduct(){ return productReposity.getAllProduct(); }
+    public List<product> AllProduct(){ return productReposity.getAllProduct();
+
+    }
 
 }
