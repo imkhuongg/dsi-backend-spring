@@ -23,4 +23,6 @@ public class ShopperService {
     public int UpdateIMG(int user_id, String avatar){return shopperRepository.UpdateAvatar(user_id,avatar);}
 
     public int UpdateShopper(int user_id,String name_shop, String email, int phone, String shop_address,LocalDateTime updated_at){return shopperRepository.updateShopper(user_id,name_shop, email, phone, shop_address,updated_at);}
+
+    public long CountShopper(){return shopperRepository.count();}
 }

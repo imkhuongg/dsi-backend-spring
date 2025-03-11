@@ -4,7 +4,7 @@ public class ProductDTO {
     private String name_product;
     private double price;
     private String description;
-    private String name_brand;
+    private int name_brand;
     private String thumb;
     private int shopper_id;
 
@@ -24,11 +24,11 @@ public class ProductDTO {
         this.thumb = thumb;
     }
 
-    public String getName_brand() {
+    public int getName_brand() {
         return name_brand;
     }
 
-    public void setName_brand(String name_brand) {
+    public void setName_brand(int name_brand) {
         this.name_brand = name_brand;
     }
 

@@ -2,6 +2,7 @@ package com.DSI_V1.dsi.repository;
 
 import com.DSI_V1.dsi.models.Shopper;
 import jakarta.transaction.Transactional;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -13,7 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Repository
-public interface ShopperRepository extends CrudRepository<Shopper , Integer> {
+public interface ShopperRepository extends JpaRepository<Shopper , Integer> {
     @Query(value = "SELECT COUNT(*) FROM shopper WHERE user_id = :user_id" , nativeQuery = true)
     int check(@Param("user_id") int user_id);
 

@@ -24,6 +24,11 @@ create table shopper(
 
 );
 
+create table brand(
+	brand_id int primary key auto_increment,
+    name_brand varchar(100) unique
+);
+
 CREATE TABLE product(
     product_id INT NOT NULL AUTO_INCREMENT,
     name_product varchar(50),
@@ -31,7 +36,7 @@ CREATE TABLE product(
     user_id INT NOT NULL,
     description TEXT,
     rate DOUBLE(10,2),
-    name_brand varchar(50),
+    brand_id int,
     thumb varchar(255),
     quantity_sold int,
     shopper_id int,
@@ -39,7 +44,14 @@ CREATE TABLE product(
     updated_at DATETIME,
     PRIMARY KEY (product_id),
     foreign key (shopper_id) references shopper(shopper_id) on delete cascade,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    foreign key (brand_id) references brand(brand_id) on delete cascade
+);
+create table product_tag(
+	product_tag_id int primary key auto_increment,
+    product_id int,
+    tag varchar(100),
+    foreign key (product_id) references product(product_id)
 );
 create table transport_company(
 	transport_company_id int auto_increment,
@@ -49,6 +61,7 @@ create table transport_company(
     transport_company_logo varchar(255),
     transport_company_email varchar(255),
     transport_company_phoneNum int,
+    status enumENUM('approval', 'approved', 'banned', 'deactivated'),
     primary key (transport_company_id)
 );
 
@@ -124,6 +137,38 @@ CREATE TABLE Shipping (
     FOREIGN KEY (order_id) REFERENCES orders(order_id) ON DELETE CASCADE,
     FOREIGN KEY (shipper_id) REFERENCES shipper(shipper_id) ON DELETE CASCADE,
     FOREIGN KEY (transport_company_id) REFERENCES Transport_Company(transport_company_id) ON DELETE CASCADE
+);
+create table seller_transport(
+	seller_transport int primary key auto_increment,
+    shopper_id int,
+    transport_company_id int,
+    status boolean,
+    foreign key (shopper_id) references shopper(shopper_id) on delete cascade,
+	foreign key (transport_company_id) references transport_company(transport_company_id) on delete cascade
+);
+create table user_avatar(
+	user_avatar_id int primary key auto_increment,
+    user_id int,
+    avatar varchar(255),
+    foreign key (user_id) references users(user_id) on delete cascade
+);
+create table product_image(
+	product_image_id int primary key auto_increment,
+    product_id int,
+    image varchar(255),
+    foreign key (product_id) references product(product_id) on delete cascade
+);
+create table admin_dsi(
+	admin_id int primary key auto_increment,
+    first_name varchar(20),
+    last_name varchar(50),
+    email varchar(100) unique,
+    password varchar(255),
+    phone int,
+    address varchar(255),
+    avatar varchar(255),
+    created_at timestamp,
+    updated_at timestamp
 );
 
 

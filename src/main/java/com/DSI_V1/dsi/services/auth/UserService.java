@@ -15,4 +15,5 @@ public class UserService {
     public int registerUser(String first_name,String last_name,String email, String password){
         return userRepositoty.registerUser(first_name, last_name, email,password);
     }
+    public long count(){return userRepositoty.count();}
 }

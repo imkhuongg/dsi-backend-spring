@@ -3,6 +3,7 @@ package com.DSI_V1.dsi.controllers;
 
 import com.DSI_V1.dsi.dto.requests.ProductDTO;
 import com.DSI_V1.dsi.dto.requests.Products.UpdateProductDTO;
+import com.DSI_V1.dsi.dto.responses.ProductResponsePage;
 import com.DSI_V1.dsi.helpers.ExtractUserIDFromToken;
 import com.DSI_V1.dsi.helpers.SuccessResponse;
 import com.DSI_V1.dsi.models.product;
@@ -10,15 +11,14 @@ import com.DSI_V1.dsi.services.ProductService;
 import com.DSI_V1.dsi.services.manageShop.ManageProductService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("api/v1/product")
@@ -77,10 +77,21 @@ public class ProductController {
     }
 
     @GetMapping("/productsAll")
-    public ResponseEntity<?> getAllProduct(){
-        List<product> AllProduct = productServiceAll.AllProduct();
+    public ResponseEntity<?> getAllProduct(@RequestParam int page , @RequestParam int size){
+        Page<product> AllProduct = productServiceAll.AllProduct(page,size);
 
-        return new ResponseEntity<>(AllProduct , HttpStatus.OK);
+        return ResponseEntity.ok(new ProductResponsePage<>(AllProduct));
+    }
+    @GetMapping("/topProduct")
+    public ResponseEntity<ProductResponsePage<product>> getSortedByQuantitySold(@RequestParam(defaultValue = "0") int page,
+                                                                                @RequestParam(defaultValue = "10") int size){
+        Page<product> products = productServiceAll.getAllProductsSortedByQuantitySold(page,size);
+        return ResponseEntity.ok(new ProductResponsePage<>(products));
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getProductById(@PathVariable int id){
+
+        return ResponseEntity.ok(productServiceAll.getProductById(id));
     }
 
 }

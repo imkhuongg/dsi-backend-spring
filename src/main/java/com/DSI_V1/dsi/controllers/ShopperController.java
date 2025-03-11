@@ -1,6 +1,7 @@
 package com.DSI_V1.dsi.controllers;
 
 import com.DSI_V1.dsi.dto.requests.ShopperUpdateDTO;
+import com.DSI_V1.dsi.dto.responses.CountResponse;
 import com.DSI_V1.dsi.helpers.ExtractUserIDFromToken;
 import com.DSI_V1.dsi.helpers.SuccessResponse;
 import com.DSI_V1.dsi.models.Shopper;
@@ -102,5 +103,11 @@ public class ShopperController  {
         int user_id = extractUserIDFromToken.getUserIDFromToken(request);
         List<product> products = manageProductService.resultSearch(user_id,name_product);
         return  new ResponseEntity<>(products , HttpStatus.OK);
+    }
+    @GetMapping("/count")
+    public ResponseEntity<?> countShopper(){
+        long count = shopperService.CountShopper();
+
+        return ResponseEntity.ok(new CountResponse(count));
     }
 }

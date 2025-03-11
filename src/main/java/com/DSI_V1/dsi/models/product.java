@@ -1,8 +1,6 @@
 package com.DSI_V1.dsi.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
@@ -16,20 +14,34 @@ public class product {
     private int user_id;
     private String description;
     private double rate;
-    private String name_brand;
     private String thumb;
-    private int quantity_sold;
+    @Column(name = "quantity_sold")
+    private int quantitySold;
     private int shopper_id;
-    private  LocalDateTime created_at;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
     private  LocalDateTime updated_at;
+
+    @ManyToOne
+    @JoinColumn(name = "brand_id", referencedColumnName = "brand_id")
+    private Brand brand;
+
+    // Getter & Setter cho brand
+    public Brand getBrand() {
+        return brand;
+    }
+
+    public void setBrand(Brand brand) {
+        this.brand = brand;
+    }
 
 
     public int getQuantity_sold() {
-        return quantity_sold;
+        return quantitySold;
     }
 
     public void setQuantity_sold(int quantity_sold) {
-        this.quantity_sold = quantity_sold;
+        this.quantitySold = quantity_sold;
     }
 
 
@@ -89,14 +101,6 @@ public class product {
         this.rate = rate;
     }
 
-    public String getName_brand() {
-        return name_brand;
-    }
-
-    public void setName_brand(String name_brand) {
-        this.name_brand = name_brand;
-    }
-
     public String getThumb() {
         return thumb;
     }
@@ -106,11 +110,11 @@ public class product {
     }
 
     public LocalDateTime getCreated_at() {
-        return created_at;
+        return createdAt;
     }
 
     public void setCreated_at(LocalDateTime created_at) {
-        this.created_at = created_at;
+        this.createdAt = created_at;
     }
 
     public LocalDateTime getUpdated_at() {
